@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Define the input file
+DATA_FILE="data.txt"
+
+# Check if the data file exists
+if [ ! -f "$DATA_FILE" ]; then
+  echo "Error: $DATA_FILE not found."
+  exit 1
+fi
+
+# Count designations
+declare -A designation_counts
+while IFS=, read -r name age designation; do
+  designation_counts["$designation"]=$((designation_counts["$designation"] + 1))
+done < "$DATA_FILE"
+
+# Print designation counts
+echo "Total number of people in each designation:"
+for designation in "${!designation_counts[@]}"; do
+  echo "$designation: ${designation_counts[$designation]}"
+done
+
+# Print all people names
+echo -e "\nAll existing people names:"
+cut -d ',' -f 1 "$DATA_FILE"
+
+# Replace "Manager" with "Team Lead" in the file
+sed -i 's/Manager/Team Lead/g' "$DATA_FILE"
+
+echo -e "\nReplaced 'Manager' with 'Team Lead' in $DATA_FILE"
