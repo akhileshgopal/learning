@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "=== System Information ==="
+echo "OS Version: $(cat /etc/os-release | grep PRETTY_NAME | cut -d= -f2 | tr -d '\"')"
+echo "Kernel Version: $(uname -r)"
+echo "Uptime: $(uptime -p)"
+echo "CPU Cores: $(nproc)"
+echo "Memory Info:"
+free -h
+echo "Swap Info:"
+swapon --show
+echo "Cache Memory:"
+grep -i '^Cached:' /proc/meminfo
+
+echo "=== Increasing ulimit ==="
+ulimit -n 1028
+echo "New ulimit (open files): $(ulimit -n)"
+
+echo "=== Changing Time Zone to Brussels ==="
+timedatectl set-timezone Europe/Brussels
+echo "Current Timezone: $(timedatectl | grep 'Time zone')"
