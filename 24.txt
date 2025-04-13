@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Name to be displayed in the HTML
+YOUR_NAME="Your Name Here"
+
+# Determine package manager
+if command -v apt >/dev/null 2>&1; then
+    PM="apt"
+    INSTALL_CMD="apt update && apt install -y nginx"
+    HTML_DIR="/var/www/html"
+elif command -v yum >/dev/null 2>&1; then
+    PM="yum"
+    INSTALL_CMD="yum install -y nginx"
+    HTML_DIR="/usr/share/nginx/html"
+else
+    echo "Unsupported package manager."
+    exit 1
+fi
+
+# Check if Nginx is installed
+if ! command -v nginx >/dev/null 2>&1; then
+    echo "Nginx not found. Installing..."
+    sudo bash -c "$INSTALL_CMD"
+else
+    echo "Nginx is already installed."
+fi
+
+# Create custom HTML file
+CUSTOM_HTML="$HTML_DIR/index.html"
+echo "<!DOCTYPE html>
+<html>
+<head><title>Welcome</title></head>
+<body>
+<h1>$YOUR_NAME</h1>
+</body>
+</html>" | sudo tee "$CUSTOM_HTML" >/dev/null
+
+# Restart Nginx
+echo "Restarting Nginx..."
+sudo systemctl restart nginx
+
+echo "Deployment complete. Open your browser and visit http://localhost to see the result."
