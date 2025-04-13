@@ -1,0 +1,26 @@
+# Define source and backup directories
+$SourceDirectory = "C:\Users\user1\Documents\source"
+$BackupDirectory = "C:\Users\user1\Documents\backup"
+$LogFile = "$BackupDirectory\backup.log"
+
+# Ensure backup directory exists
+if (!(Test-Path -Path $BackupDirectory)) {
+    New-Item -ItemType Directory -Path $BackupDirectory
+}
+
+# Create a log file if it doesn't exist
+if (!(Test-Path -Path $LogFile)) {
+    New-Item -ItemType File -Path $LogFile
+}
+
+# Copy files and log the operation
+Get-ChildItem -Path $SourceDirectory -File | ForEach-Object {
+    $SourceFile = $_.FullName
+    $TargetFile = Join-Path $BackupDirectory $_.Name
+    Copy-Item -Path $SourceFile -Destination $TargetFile -Force
+
+    # Log the copy operation
+    $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $LogEntry = "$Timestamp - Copied file: $($_.Name) to $TargetFile"
+    Add-Content -Path $LogFile -Value $LogEntry
+}
