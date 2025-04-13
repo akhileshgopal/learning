@@ -52,3 +52,25 @@ if $length_check && $alpha_num_check && $case_check; then
 else
     echo "Weak Password"
 fi
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+# Create directory q4
+mkdir q4
+cd q4
+
+# Create subdirectories
+mkdir dir1 dir2 dir3 dir4
+
+# Create files
+touch file1.txt file1.js file2.txt file2.ts file4.py file5.tf file2.md file.md file.sh file.yml
+
+#Return to the original directory
+cd ..
