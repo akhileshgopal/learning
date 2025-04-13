@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Input directory
+input_dir="q4"
+
+# Function to check if a file is executable
+is_executable() {
+    local file="$1"
+    if [ -x "$file" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Check if the input directory exists
+if [ ! -d "$input_dir" ]; then
+    echo "Error: Directory '$input_dir' does not exist."
+    exit 1
+fi
+
+# Initialize counters
+sh_count=0
+py_count=0
+yml_count=0
+md_count=0
+ts_count=0
+tf_count=0
+js_count=0
+txt_count=0
+directory_count=0
+
+# Loop through files and directories in the input directory
+for file in "$input_dir"/*; do
+    # Check if it's a directory
+    if [ -d "$file" ]; then
+        directory_count=$((directory_count + 1))
+    else
+        # Extract file extension
+        extension="${file##*.}"
+        
+        # Count files based on extension
+        case "$extension" in
+            sh)
+                # Check if .sh file is executable
+                if is_executable "$file"; then
+                    echo "File '$file' has been made executable"
+                else
+                    echo "File '$file' is not executable or found"
+                    # Make the file executable
+                    chmod +x "$file"
+                    echo "File '$file' has been made executable"
+                fi
+                sh_count=$((sh_count + 1))
+                ;;
+            py)
+                py_count=$((py_count + 1))
+                ;;
+            yml)
+                yml_count=$((yml_count + 1))
+                ;;
+            md)
+                md_count=$((md_count + 1))
+                ;;
+            ts)
+                ts_count=$((ts_count + 1))
+                ;;
+            tf)
+                tf_count=$((tf_count + 1))
+                ;;
+            js)
+                js_count=$((js_count + 1))
+                ;;
+            txt)
+                txt_count=$((txt_count + 1))
+                ;;
+        esac
+    fi
+done
+
+# Print the counts
+echo "sh: $sh_count"
+echo "py: $py_count"
+echo "yml: $yml_count"
+echo "md: $md_count"
+echo "ts: $ts_count"
+echo "tf: $tf_count"
+echo "js: $js_count"
+echo "txt: $txt_count"
+echo "directories: $directory_count"
