@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Set directories
+SOURCE_DIR="directory1"
+BACKUP_DIR="backup"
+ERROR_LOG="error.log"
+BACKUP_LOG="backup.log"
+
+# Clear old logs
+> "$ERROR_LOG"
+> "$BACKUP_LOG"
+
+# Check if source and backup directories exist
+if [ ! -d "$SOURCE_DIR" ]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Source directory '$SOURCE_DIR' not found." >> "$ERROR_LOG"
+    exit 1
+fi
+
+if [ ! -d "$BACKUP_DIR" ]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Backup directory '$BACKUP_DIR' not found." >> "$ERROR_LOG"
+    exit 1
+fi
+
+# Copy text files and log
+find "$SOURCE_DIR" -type f -name "*.txt" | while read -r file; do
+    # Create target directory structure
+    RELATIVE_PATH="${file#$SOURCE_DIR/}"
+    TARGET_PATH="$BACKUP_DIR/$RELATIVE_PATH"
+    TARGET_DIR=$(dirname "$TARGET_PATH")
+    
+    mkdir -p "$TARGET_DIR" 2>>"$ERROR_LOG"
+    if cp "$file" "$TARGET_PATH" 2>>"$ERROR_LOG"; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Backed up - $file to $TARGET_PATH" >> "$BACKUP_LOG"
+    else
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: Failed to copy $file" >> "$ERROR_LOG"
+    fi
+done
+
+# Run deploy_nginx.sh
+if [ -f "./deploy_nginx.sh" ]; then
+    echo "Running deploy_nginx.sh..."
+    ./deploy_nginx.sh >> "$BACKUP_LOG" 2>>"$ERROR_LOG"
+else
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: deploy_nginx.sh not found." >> "$ERROR_LOG"
+fi
