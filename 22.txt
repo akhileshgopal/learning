@@ -1,14 +1,22 @@
 #!/bin/bash
 
-# Create directory q4
-mkdir q4
-cd q4
+# Create base directory
+mkdir -p q4/dir1/dir2/dir3/dir4
 
-# Create subdirectories
-mkdir dir1 dir2 dir3 dir4
+# Create files inside nested directories
+touch q4/dir1/dir2/dir3/dir4/file4.py
+touch q4/dir1/dir2/dir3/dir4/file5.tf
 
-# Create files
-touch file1.txt file1.js file2.txt file2.ts file4.py file5.tf file2.md file.md file.sh file.yml
+# Create files in dir2
+touch q4/dir1/dir2/file2.ts
+touch q4/dir1/dir2/file2.txt
 
-#Return to the original directory
-cd ..
+# Create files in dir1
+touch q4/dir1/file1.js
+touch q4/dir1/file1.txt
+touch q4/dir1/file2.md
+
+# Create files in q4
+touch q4/file.md
+touch q4/file.sh
+touch q4/file.yml
