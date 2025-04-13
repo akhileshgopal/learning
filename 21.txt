@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# JSON file name
+JSON_FILE="users.json"
+FILTERED_FILE="filtered_users.json"
+
+# Check if jq is installed
+if ! command -v jq &> /dev/null; then
+    echo "jq is required but not installed. Installing..."
+    sudo apt update && sudo apt install -y jq || { echo "Failed to install jq"; exit 1; }
+fi
+
+# 1. Extract all names
+echo "All user names:"
+jq -r '.users[].name' "$JSON_FILE"
+
+echo ""
+
+# 2. Filter users with age > 30 and save to new file
+jq '{users: [.users[] | select(.age > 30)]}' "$JSON_FILE" > "$FILTERED_FILE"
+echo "Filtered users with age > 30 saved to $FILTERED_FILE"
+
+echo ""
+
+# 3. Calculate average age
+AVG_AGE=$(jq '[.users[].age] | add / length' "$JSON_FILE")
+echo "Average age of users: $AVG_AGE"
